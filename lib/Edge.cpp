@@ -1,15 +1,34 @@
-#include "Graph.h"
-#include "Vertex.h"
+#include <string>
 #include "Edge.h"
 
-Vertex*
-Edge::get_neighbour() const
+Edge::Edge() = default;
+
+Edge::Edge( const std::string & e )
+   : edge( e )
+   {}
+
+std::string
+Edge::get_edge() const
 {
-   return neighbour;
+   return edge;
 }
 
-void
-Edge::set_neighbour( Vertex *v )
+bool
+Edge::operator>( const Edge & E ) const
 {
-   neighbour = v;
+   return get_edge() > E.get_edge();
+};
+
+bool
+Edge::operator<( const Edge & E ) const
+{
+   return get_edge() < E.get_edge();
+};
+
+bool
+Edge::operator==( const Edge & E ) const
+{
+   return get_edge() == E.get_edge();
 }
+
+

@@ -1,122 +1,64 @@
 #include <iostream>
-#include <vector>
+#include <set>
+#include <map>
 #include <string>
 #include "Graph.h"
 #include "Vertex.h"
 #include "Edge.h"
+#include <utility>
 
 void
 Graph::insert_vertex( std::string name)
 {
-   for( auto& vertex  : list  )
-   {
-      if( name == vertex -> get_name() )
-      {
-         return;
-      }
-   }
-
-   Vertex *temp = new Vertex(name);
-   list.push_back ( temp );
+   std::pair<std::string, Vertex> temp (name, Vertex() );
+   vertexes.insert( temp );
 }
 
 void 
-Graph::insert_edge( Vertex *n, Vertex *new_edge )
+Graph::insert_edge( std::string node, Edge new_edge )
 {
-if( n == nullptr || new_edge == nullptr )
+   auto it = vertexes.find( node );
+   if( it != vertexes.end() )
    {
-      return;
-   }
-
-   if( !is_vertex( n ) )
-   {
-      return;
-   }
-
-   for( auto& vertex : list )
-   {
-      if( n -> get_name() == vertex -> get_name() )
-      {
-         for( auto& current_edges : vertex -> neighbours )
-         {
-            if( current_edges -> get_neighbour() -> get_name() == new_edge -> get_name() )
-            {
-               return;
-            }
-         } 
-         Edge* temp = new Edge;
-         temp -> set_neighbour( new_edge );
-         vertex -> neighbours.push_back( temp );
-      }
+     it -> second.edges.insert( new_edge );
    }
 }
 
 void
-Graph::insert_edge( std::string n, std::string new_edge)
+Graph::insert_edge( std::string node, std::string new_edge )
 {
-   Vertex* temp1 = get_vertex( n );
-   Vertex* temp2 = get_vertex( new_edge );
-   insert_edge( temp1, temp2 );
-}
-
-Vertex*
-Graph::get_vertex( std::string name ) const
-{
-   for( auto& vertex : list )
+   if( node != new_edge )
    {
-      if( name == vertex -> get_name() )
-      {
-         return vertex;
-      }
+      Edge temp( new_edge );
+      insert_edge( node, temp );
    }
-return nullptr;
 }
 
 void
-Graph::print_vertex( std::string name ) const
-{  
-   std::cout << name << " : ";
-   for( auto&  vertex : list )
+Graph::remove_edge( std::string node, std::string edge )
+{
+   for( auto& pair : vertexes )
    {
-      if(name == vertex -> get_name() )
+      if( pair.first == node )
       {
-         for( auto& edge : vertex -> neighbours )
-         {
-            std::cout << " -> " << edge -> get_neighbour() -> get_name();
-         }
-         std::cout << std::endl;
-         break;
+         pair.second.edges.erase( edge );
       }
    }
 }
-
+ 
 void
 Graph::print_graph() const
 {
-   for( auto&  vertex : list )
+   for( auto&  pair : vertexes )
    {
-      std::cout << vertex -> get_name() << " : ";
-      for( auto& edge : vertex -> neighbours )
+      std::cout << pair.first << " : ";
+      for( auto& edge : pair.second.edges )
       {
-       std::cout << " -> " << edge -> get_neighbour() -> get_name();
+         std::cout << " -> " << edge.get_edge();
       }
       std::cout << std::endl;
    }
 }
-
-bool
-Graph::is_vertex( Vertex *n )
-{
-for( auto& vertex : list )
-   {
-      if( vertex -> get_name() == n -> get_name() )
-      {
-         return true;
-      }
-   }
-   return false; 
-}
-
 
 
 Graph
@@ -124,16 +66,18 @@ Graph::transpose() const
 {
    Graph Graph_T;
 
-   for( auto& vertex : list )
+   //Vertex
+   for( auto& pair : vertexes )
    {
-      Graph_T.insert_vertex( vertex -> get_name() );
+      Graph_T.insert_vertex( pair.first );
    }
 
-   for( auto& vertex : list )
+   //Edges
+   for( auto& pair : vertexes )
    {
-      for( auto& edges : vertex -> neighbours )
+      for( auto& edge : pair.second.edges )
       {
-         Graph_T.insert_edge(edges -> get_neighbour() ,vertex );
+         Graph_T.insert_edge(edge.get_edge() ,pair.first );
       }
    }
    return Graph_T;  
@@ -143,30 +87,32 @@ Graph
 Graph::merge( const Graph & G2 ) const
 {
    Graph temp;
-   for( auto& vertex : list)
+
+   //Merge vertexes
+   for( auto& pair : vertexes)
    {
-      temp.insert_vertex( vertex -> get_name() );
+      temp.insert_vertex( pair.first );
    }
 
-   for( auto& vertex : G2.list)
+   for( auto& pair : G2.vertexes )
    {
-      temp.insert_vertex( vertex -> get_name() );
+      temp.insert_vertex( pair.first );
    }
 
-
-   for( auto& vertex : list )
+   //Merge edges
+   for( auto& pair : vertexes )
    {
-      for( auto edge : vertex -> neighbours )
+      for( auto edge : pair.second.edges )
       {
-         temp.insert_edge( vertex, edge -> get_neighbour() ); 
+         temp.insert_edge( pair.first, edge.get_edge() ); 
       }   
    }
 
-   for( auto& vertex : G2.list )
+   for( auto& pair : G2.vertexes )
    {
-      for( auto edge : vertex -> neighbours )
+      for( auto edge : pair.second.edges )
       {
-         temp.insert_edge( vertex, edge -> get_neighbour() ); 
+         temp.insert_edge( pair.first, edge.get_edge() ); 
       }   
    }
    return temp;
@@ -175,34 +121,39 @@ Graph::merge( const Graph & G2 ) const
 Graph
 Graph::inverse() const
 {
-/*
+   //Create a Graph temp which is complete
    Graph temp;
 
-   for( auto& vertex : list )
+   for( auto& pair : vertexes )
    {
-      temp.insert_vertex( vertex );
+      temp.insert_vertex( pair.first );
    }
 
-   for( auto& vertex : list )
+   for( auto& pair : vertexes )
    {
-      for( auto edge : vertex -> neighbours )
+      for( auto vertex : vertexes )
       {
-         temp.insert_edge( vertex, edge -> get_neighbour() ); 
+         temp.insert_edge( pair.first,vertex.first  ); 
       }   
    }
-*/
-   //TODO
-   //HOW TO DO THIS?
 
-   //REMOVE
-   return *this;
+  
+   //Remove all edges which is THIS graph
+   for( auto& pair : vertexes )
+   {
+      for( auto edge : pair.second.edges )
+      {
+         temp.remove_edge( pair.first, edge.get_edge()  );
+      }   
+   }
+
+   return temp;
 }
+
+
 //Global functions
 void print_graph( Graph G )
 {
    G.print_graph();
 }
-
-
-
 

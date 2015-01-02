@@ -20,19 +20,25 @@ int main()
    G.insert_edge("D","A");
    G.insert_edge("D","A");
    
-
-   //G.print_node( "A" );    
    G.print_graph();
    std::cout << '\n';
 
-   Graph GT = G.transpose();
-   GT.print_graph();
-   std::cout << '\n';
+   //Graph GT = G.transpose();
+   //GT.print_graph();
+   //std::cout << '\n';
 
    //print_graph( G.transpose() );
 
-   Graph Gk = G.merge( GT );
-   Gk.print_graph();
+   //Graph Gk = G.merge( GT );
+   //Gk.print_graph();
+   //std::cout << '\n';
+
+   Graph I = G.inverse();
+   I.print_graph();
+   std::cout << '\n';
+
+   Graph K = G.merge( I );
+   K.print_graph();
 
    return 0;
 }

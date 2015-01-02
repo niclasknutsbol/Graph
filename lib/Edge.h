@@ -1,15 +1,20 @@
 #ifndef EDGE_H
 #define EDGE_H
 
-#include "Vertex.h"
+#include <string>
 
 class Edge
 {
 public:
-   Vertex* get_neighbour() const;
-   void set_neighbour( Vertex *v );
+//protected:
+   Edge();
+   Edge( const std::string &);
+   std::string get_edge() const;
+   bool operator>( const Edge& ) const;
+   bool operator<( const Edge& ) const ;
+   bool operator==( const Edge& ) const; 
 private:
-   Vertex *neighbour;
+   std::string edge;
 };
 
 #endif /* EDGE_H */

@@ -1,28 +1,28 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <vector>
-#include <algorithm>
+#include <map>
 #include <string>
 #include "Vertex.h"
 
-class Graph : public Vertex
+class Graph : public Vertex, Edge
 {
 public:
    void insert_vertex( std::string);
-   void insert_edge( std::string, std::string); 
-   void print_vertex( const std::string) const;
-   void print_graph() const;
+   void insert_edge( std::string, std::string);
+   void remove_edge( std::string, std::string );
+
    Graph transpose() const;
    Graph merge( const Graph & ) const;
-   Graph inverse() const;
+   Graph inverse() const;  
+ 
+   void print_graph() const;
+ 
 protected:
-   void insert_edge( Vertex*, Vertex*);
-   Vertex* get_vertex( std::string ) const;
-   bool is_vertex( Vertex * );   
+   void insert_edge( std::string, Edge);
 
 private:
-   std::vector<Vertex*> list;
+   std::map<std::string,Vertex> vertexes;
 };
 
 void print_graph( Graph );

@@ -1,25 +1,15 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include <vector>
-#include <algorithm>
-#include <string>
+#include <set>
+#include "Edge.h"
 
 class Vertex
 {
 public:
-   Vertex() = default;
-
-   Vertex( const std::string & n )
-   : name(n)
-   {}
-
-   std::string get_name()const;
- 
-//protected:
-   std::vector<class Edge*> neighbours;
-private:
-   std::string name;
+ //protected
+   Vertex();
+   std::set<Edge> edges;
 };
 
 #endif /* VERTEX_H */
